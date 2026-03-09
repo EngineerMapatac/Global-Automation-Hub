@@ -1,0 +1,24 @@
+name: Sync Listener
+
+on:
+  repository_dispatch:
+    types: [global_sync_trigger]
+
+jobs:
+  commit-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Update Log File
+        run: |
+          echo "Automated sync completed on: $(date)" >> automation_log.txt
+
+      - name: Commit and Push
+        run: |
+          git config --local user.email "234441886+EngineerMapatac@users.noreply.github.com"
+          git config --local user.name "John Ramil Mapatac"
+          git add automation_log.txt
+          git commit -m "chore: automated daily sync"
+          git push
