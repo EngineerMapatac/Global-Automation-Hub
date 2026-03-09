@@ -1,0 +1,33 @@
+name: Global Repo Dispatcher
+
+on:
+  # Allows you to run this manually from the Actions tab
+  workflow_dispatch: 
+  
+  # Runs automatically at midnight UTC (8:00 AM Philippine Standard Time)
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+          
+      - name: Run Dispatcher Script
+        env:
+          # This maps your GitHub Secret to the os.getenv("GH_PAT") in Python
+          GH_PAT: ${{ secrets.GH_PAT }} 
+        run: python dispatch_updates.py
